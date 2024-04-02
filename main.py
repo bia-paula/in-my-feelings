@@ -2,7 +2,12 @@ import spotipy
 import time
 from spotipy.oauth2 import SpotifyOAuth
 
-from flask import Flask, request, redirect, url_for, session
+from flask import Flask, request, redirect, url_for, session, render_template
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+import json
 
 app = Flask(__name__)
 
@@ -33,8 +38,12 @@ def get_top_tracks():
 
     sp = spotipy.Spotify(auth=token_info['access_token'])
     top_tracks = sp.current_user_top_tracks(time_range='short_term')['items']
+    # top_tracks = sp.playlist_items("37i9dQZF1DX4o1oenSJRJd")['items']
+    #print(top_tracks)
     result = []
-    for track in top_tracks:
+    for element in top_tracks:
+        #track = element['track'] # ------
+        track = element
         artists = []
         for artist in track['artists']:
             artist = {'name': artist['name'],
@@ -58,13 +67,48 @@ def get_tracks_audio_features():
     sp = spotipy.Spotify(auth=token_info['access_token'])
     features = sp.audio_features(ids.split(','))
 
-    emotions = []
+    emotions = {}
+    xs = []
+    ys = []
     for track in features:
         energy = track['energy']
         valence = track['valence']
-        emotions.append({'id': track['id'], 'emotion': [valence, energy]})
+        emotions[track['id']] = {"emotion": [valence, energy]}
+        xs.append(valence)
+        ys.append(energy)
 
-    return emotions
+        song = sp.track(track['id'])
+        emotions[song['id']]['name'] = song['name']
+        artists = []
+        for artist in song['artists']:
+            artists.append(artist['name'])
+        emotions[song['id']]['artists'] = artists
+
+    labels = [f"{emotions[t_id]['name']} BY {', '.join(emotions[t_id]['artists'])}" for t_id in emotions.keys()]
+    values = [{"x": emotions[t_id]["emotion"][0], "y": emotions[t_id]["emotion"][1]} for t_id in emotions.keys()]
+    print(values)
+
+    # plt.clf()
+    # plt.scatter(xs, ys)
+    #
+    # for id in emotions.keys():
+    #     x, y = emotions[id]["emotion"]
+    #     label = emotions[id]["name"]
+    #
+    #     plt.annotate(label,  # this is the text
+    #                  (x, y),  # these are the coordinates to position the label
+    #                  textcoords="offset points",  # how to position the text
+    #                  xytext=(0, 10),  # distance from text to points (x,y)
+    #                  ha='center')  # horizontal alignment can be left, right or center
+
+    out_file = open("emotions.json", "w")
+
+    json.dump(emotions, out_file)
+
+    out_file.close()
+
+    #return emotions
+    return render_template("graph.html", labels=labels, values=values)
 
 
 
