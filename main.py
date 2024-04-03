@@ -71,8 +71,8 @@ def get_tracks_audio_features():
     xs = []
     ys = []
     for track in features:
-        energy = track['energy']
-        valence = track['valence']
+        energy = (track['energy']*2)-1
+        valence = (track['valence']*2)-1
         emotions[track['id']] = {"emotion": [valence, energy]}
         xs.append(valence)
         ys.append(energy)
