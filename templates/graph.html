@@ -6,21 +6,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sample Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <canvas id="scatterPlot" width="900" height="900"></canvas>
     <script>
-        var ctx = document.getElementById("scatterPlot").getContext("2d")
-        var scatterChart = new Chart(ctx, {
+        var ctx = document.getElementById("scatterPlot");//.getContext("2d")
+
+        // config
+        const config = {
             type: "scatter",
-            data: {
-                datasets: [{
-                        label: "Data Points",
-                        data: {{ values | safe }},
-                    }],
-            },
-            options: {
+            options:{
                 scales: {
                     x: {
                         type: 'linear',
@@ -46,16 +42,32 @@
                     },
                 },
                 plugins: {
+                    tooltip: {
+                        callbacks:{
+                            label: (context) => {
+                                //console.log(context.raw.data)
+                                return `${context.raw.data}: (${context.raw.x}, ${context.raw.y})`
+                            }
+                        }
+                    },
                     title: {
                         display: true,
                         text: 'Top Track Emotions',
                     },
                 },
-            }
-
-
-
-        });
+            },
+            data: {
+                datasets: [{
+                        label: "Tracks",
+                        data: {{ values | safe }},
+                    }],
+            },
+        };
+        // render graph
+        var scatterChart = new Chart(ctx, config);
+        // Instantly assign Chart.js version
+        // const chartVersion = document.getElementById('chartVersion');
+        // chartVersion.innerText = Chart.version;
     </script>
 </body>
 </html>
