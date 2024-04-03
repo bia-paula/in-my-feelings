@@ -85,7 +85,7 @@ def get_tracks_audio_features():
         emotions[song['id']]['artists'] = artists
 
     labels = [f"{emotions[t_id]['name']} BY {', '.join(emotions[t_id]['artists'])}" for t_id in emotions.keys()]
-    values = [{"x": emotions[t_id]["emotion"][0], "y": emotions[t_id]["emotion"][1]} for t_id in emotions.keys()]
+    values = [{"x": emotions[t_id]["emotion"][0], "y": emotions[t_id]["emotion"][1], "data": f"{emotions[t_id]['name']} by {', '.join(emotions[t_id]['artists'])}"} for t_id in emotions.keys()]
     print(values)
 
     # plt.clf()
