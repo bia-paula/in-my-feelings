@@ -9,65 +9,71 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
 </head>
 <body>
-    <canvas id="scatterPlot" width="900" height="900"></canvas>
-    <script>
-        var ctx = document.getElementById("scatterPlot");//.getContext("2d")
+    <div class="chart-container">
+        <canvas id="scatterPlot" width="300" height="300"></canvas>
+        <script>
+            var ctx = document.getElementById("scatterPlot");//.getContext("2d")
 
-        // config
-        const config = {
-            type: "scatter",
-            options:{
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        title: {
-                            display: true,
-                            text: 'Valence',
+            // config
+            const config = {
+                type: "scatter",
+                options:{
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Valence',
+                            },
+                            min: -1,
+                            max: 1,
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Energy',
+                            },
+                            min: -1,
+                            max: 1,
                         },
                     },
-                    y: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Energy',
+                    elements: {
+                        point: {
+                            radius: 8,
+                            hoverRadius: 10,
                         },
                     },
-                },
-                elements: {
-                    point: {
-                        radius: 8,
-                        hoverRadius: 10,
-                    },
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks:{
-                            label: (context) => {
-                                //console.log(context.raw.data)
-                                return `${context.raw.data}: (${context.raw.x}, ${context.raw.y})`
+                    plugins: {
+                        tooltip: {
+                            callbacks:{
+                                label: (context) => {
+                                    //console.log(context.raw.data)
+                                    return `${context.raw.data}: (${context.raw.x}, ${context.raw.y})`
+                                }
                             }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Top Track Emotions',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Top Track Emotions',
+                        },
                     },
                 },
-            },
-            data: {
-                datasets: [{
-                        label: "Tracks",
-                        data: {{ values | safe }},
-                    }],
-            },
-        };
-        // render graph
-        var scatterChart = new Chart(ctx, config);
-        // Instantly assign Chart.js version
-        // const chartVersion = document.getElementById('chartVersion');
-        // chartVersion.innerText = Chart.version;
-    </script>
+                data: {
+                    datasets: [{
+                            label: "Tracks",
+                            data: {{ values | safe }},
+                        }],
+                },
+            };
+            // render graph
+            var scatterChart = new Chart(ctx, config);
+            // Instantly assign Chart.js version
+            // const chartVersion = document.getElementById('chartVersion');
+            // chartVersion.innerText = Chart.version;
+        </script>
+    </div>
 </body>
 </html>
